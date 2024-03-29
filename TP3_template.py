@@ -17,7 +17,7 @@ HEADERS={'Authorization':'token '+TOKEN}
 print("======")
 
 # 1. Read the given .csv file into a pandas DataFrame (df).
-# 2. Make sure there are 2 columns, one column name is "contributor" that has the name of the contributor, 
+# 2. Make sure there are 2 columns, one column name is "contributor" that has the name of the contributor,
 #    and another column name is "bothunter" that you will use later on in this assignment.
 # 3. Display the DataFrame.
 
@@ -38,11 +38,11 @@ print(f"{contributors=}")
 print("======")
 
 # 1. Using a for loop, iterate over each contributor in the list and query the GitHub Users API.
-#    You can use "query = f'{QUERY_ROOT}/users/{contributor}'", where QUERY_ROOT is defined at the beginning of this notebook 
+#    You can use "query = f'{QUERY_ROOT}/users/{contributor}'", where QUERY_ROOT is defined at the beginning of this notebook
 #    above and 'contributor' is each individul contributor from the list
 # 2. Get the response using 'response = requests.get(query, headers=HEADERS)'.
 # 3. convert the response to JSON using 'json_response = response.json()'.
-# 4. Iterate over this JSON response and get the value of the 'type' key. If it is "Bot" then the contributor is an App, 
+# 4. Iterate over this JSON response and get the value of the 'type' key. If it is "Bot" then the contributor is an App,
 #    if "User" then the contributor is an account. You should boolean values to indicate if the contributor is an App (True) or User/Organisation (False)
 # 5. Save these results in list of dictionary of the form [{'contributor': <contributor name>, 'app': <boolean value>}, {...}, {...}, {...}].
 #    Lets call this list as "app_list_dict"
@@ -101,7 +101,7 @@ print(merged)
 
 print("======")
 
-# Read the predictions given by RABBIT from the corresponding .csv file 
+# Read the predictions given by RABBIT from the corresponding .csv file
 
 rabbit_pred = pd.read_csv("homebrew_homebrew-core_2/rabbit_predictions.csv")
 del rabbit_pred['confidence']
@@ -140,15 +140,15 @@ def determine_final_type(row):
     # Case 1 : if two raters mentioned a contributor as Bot and others mentioned it as Unknown
     if 'Bot' in counts.index and counts['Bot'] >= 2:
         return 'Bot'
-    
+
     # Case 2 : if 3 raters give Unknown to a contributor
     if counts.get('Unknown', 0) >= 3:
         return counts.idxmax()
-    
+
     # Case 3 : if 2 raters give the prediction as Bot and 2 raters give it as Human
     if 'Bot' in counts.index and 'Human' in counts.index and counts['Bot'] == counts['Human']:
         return 'Human'
-    
+
     # final decision is Human if there is contradiction
     return 'Human'
 
@@ -164,23 +164,23 @@ print("======")
 # Compute and report the Fleiss Kappa interrater agreement score between the labels computed by all bot identiﬁcation tools.
 
 # between bothunter and rabbit
-converted_df = aggregate_raters(np.array(merged[['bothunter','rabbit']]))  
-kappa = fleiss_kappa(converted_df[0])  
+converted_df = aggregate_raters(np.array(merged[['bothunter','rabbit']]))
+kappa = fleiss_kappa(converted_df[0])
 print(f"bothunter & rabbit : {kappa}")
 
 # between bothunter and bodegha
-converted_df = aggregate_raters(np.array(merged[['bothunter','bodegha']]))  
-kappa = fleiss_kappa(converted_df[0])  
+converted_df = aggregate_raters(np.array(merged[['bothunter','bodegha']]))
+kappa = fleiss_kappa(converted_df[0])
 print(f"bothunter & bodegha : {kappa}")
 
 # between bodegha and rabbit
-converted_df = aggregate_raters(np.array(merged[['bodegha','rabbit']]))  
-kappa = fleiss_kappa(converted_df[0])  
+converted_df = aggregate_raters(np.array(merged[['bodegha','rabbit']]))
+kappa = fleiss_kappa(converted_df[0])
 print(f"bodegha & rabbit : {kappa}")
 
 # between bothunter, bodegha and rabbit
-converted_df = aggregate_raters(np.array(merged[['bothunter','bodegha','rabbit']]))  
-kappa = fleiss_kappa(converted_df[0])  
+converted_df = aggregate_raters(np.array(merged[['bothunter','bodegha','rabbit']]))
+kappa = fleiss_kappa(converted_df[0])
 print(f"bothunter, bodegha & rabbit : {kappa}")
 
 print("======")
@@ -221,16 +221,16 @@ _df.to_csv("events.csv", index=False)
 print("======")
 
 # Group each event into the following four categories
-# Issues: IssueCommentEvent, IssuesEvent  
-# Pull Requests: PullRequestEvent, PullRequestReviewCommentEvent  
-# Commits: CommitCommentEvent, PushEvent  
+# Issues: IssueCommentEvent, IssuesEvent
+# Pull Requests: PullRequestEvent, PullRequestReviewCommentEvent
+# Commits: CommitCommentEvent, PushEvent
 # Repository: CreateEvent, DeleteEvent, ForkEvent, GollumEvent, MemberEvent
-#             PublicEvent, ReleaseEvent, SponsorshipEvent, WatchEvent  
+#             PublicEvent, ReleaseEvent, SponsorshipEvent, WatchEvent
 
 issues_events = ["IssueCommentEvent", "IssuesEvent"]
 pull_requests_events = ["PullRequestEvent", "PullRequestReviewCommentEvent"]
 commits_events = ["CommitCommentEvent", "PushEvent"]
-repository_events = ["CreateEvent", "DeleteEvent", "ForkEvent", "GollumEvent", "MemberEvent", 
+repository_events = ["CreateEvent", "DeleteEvent", "ForkEvent", "GollumEvent", "MemberEvent",
                     "PublicEvent", "ReleaseEvent", "SponsorshipEvent", "WatchEvent"]
 
 def categorize_event(event_type):
